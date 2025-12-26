@@ -108,4 +108,25 @@ restartBtn.addEventListener('click', () => {
     location.reload();
 });
 
-document.addEventListener('keydown', jump);
+// Keyboard: spacebar to jump (desktop)
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+        e.preventDefault();
+        jump();
+    }
+});
+
+// Touch: tap the screen to start the game (first touch) or jump (if already started)
+document.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (gameOver) return;
+
+    if (!gameStarted) {
+        // start the game using the existing play handler
+        playBtn.click();
+        return;
+    }
+
+    // if game already started, perform jump
+    jump();
+}, { passive: false });
