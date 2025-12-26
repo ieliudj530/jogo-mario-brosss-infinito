@@ -118,20 +118,15 @@ document.addEventListener('keydown', (e) => {
 
 // Touch: tap the screen to start the game (first touch) or jump (if already started)
 document.addEventListener('touchstart', (e) => {
-    // Determine actual target of the touch (handle elements inside buttons)
     const touch = e.touches && e.touches[0];
     const target = touch ? document.elementFromPoint(touch.clientX, touch.clientY) : e.target;
 
-    // If touching the play or restart buttons, let their click handlers run
-    if (target === playBtn || target === restartBtn || (target && (playBtn.contains(target) || restartBtn.contains(target)))) {
-        // call restart directly on restart touch to avoid prevented click
-        if (target === restartBtn || (target && restartBtn.contains(target))) {
-            restartBtn.click();
-        }
+    // If touching buttons, let them handle the click (don't prevent default)
+    if (playBtn.contains(target) || restartBtn.contains(target)) {
         return;
     }
 
-    // For other touches, prevent default scrolling and act as game control
+    // For game-area touches, prevent default and handle jump/start
     e.preventDefault();
     if (gameOver) return;
 
@@ -148,8 +143,8 @@ document.addEventListener('touchstart', (e) => {
 
 // Mouse click: click/tap with mouse should start game (if needed) or jump
 document.addEventListener('click', (e) => {
-    // ignore clicks on control buttons
-    if (e.target === playBtn || e.target === restartBtn) return;
+    // Let buttons handle their own clicks
+    if (playBtn.contains(e.target) || restartBtn.contains(e.target)) return;
     if (gameOver) return;
 
     if (!gameStarted) {
