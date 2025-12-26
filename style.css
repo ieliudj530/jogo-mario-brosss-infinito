@@ -21,6 +21,7 @@
     width: 60px;
     right: -80px;
     animation: pipe-animation 1.5s infinite linear;
+    animation-play-state: paused;
 }
 
 .mario {
@@ -39,6 +40,7 @@
     top: 30px;
     right: -550px;
     animation: cloud 20s infinite linear;
+    animation-play-state: paused;
 }
 
 /* Animações */
@@ -106,3 +108,27 @@
     display: none;
 }
 
+.play {
+    position: absolute;
+    top: 180px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 30px;
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.play:hover {
+    background-color: #45a049;
+}
+
+.video-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}

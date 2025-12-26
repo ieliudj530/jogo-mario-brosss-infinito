@@ -2,9 +2,13 @@ const mario = document.querySelector('.mario');
 const pipe = document.querySelector('.pipe');
 const scoreElement = document.getElementById('score');
 const restartBtn = document.getElementById('restart');
+const playBtn = document.getElementById('play');
+const video = document.getElementById('video');
 
 let score = 0;
 let gameOver = false;
+let gameStarted = false;
+let pipesPassed = 0;
 
 const jump = () => {
     if (!gameOver) {
@@ -16,37 +20,88 @@ const jump = () => {
     }
 };
 
-// SCORE
-const scoreLoop = setInterval(() => {
-    if (!gameOver) {
-        score++;
-        scoreElement.innerText = score;
+// VIDEO PLAY DETECTION
+video.addEventListener('play', () => {
+    if (gameStarted && playBtn.style.display !== 'none') {
+        playBtn.style.display = 'none';
     }
-}, 100);
+});
+
+// PLAY BUTTON
+playBtn.addEventListener('click', () => {
+    gameStarted = true;
+    playBtn.style.display = 'none';
+    
+    // Reanudar animaciones
+    pipe.style.animationPlayState = 'running';
+    document.querySelector('.cloud').style.animationPlayState = 'running';
+    
+    video.play();
+});
+
+// SCORE
+let scoreLoop;
+
+const startScoreLoop = () => {
+    scoreLoop = setInterval(() => {
+        if (!gameOver && gameStarted) {
+            score++;
+            scoreElement.innerText = score;
+        }
+    }, 100);
+};
+
+startScoreLoop();
 
 // GAME LOOP
-const loop = setInterval(() => {
-    const pipePosition = pipe.offsetLeft;
-    const marioPosition = +window.getComputedStyle(mario)
-        .bottom.replace('px', '');
+let loop;
 
-    if (pipePosition <= 120 && pipePosition > 0 && marioPosition < 80) {
-        gameOver = true;
+const startGameLoop = () => {
+    loop = setInterval(() => {
+        if (!gameStarted) {
+            return;
+        }
 
-        pipe.style.animation = 'none';
-        pipe.style.left = `${pipePosition}px`;
+        const pipePosition = pipe.offsetLeft;
+        const marioPosition = +window.getComputedStyle(mario)
+            .bottom.replace('px', '');
+        
+        const marioWidth = mario.offsetWidth;
+        const pipeWidth = pipe.offsetWidth;
+        const marioHeight = 100;
 
-        mario.style.animation = 'none';
-        mario.style.bottom = `${marioPosition}px`;
+        // Detectar colisión
+        if (pipePosition <= marioWidth && pipePosition > -pipeWidth && marioPosition < 80) {
+            gameOver = true;
 
-        mario.src = 'imgs/game-over.png';
+            pipe.style.animation = 'none';
+            pipe.style.left = `${pipePosition}px`;
 
-        restartBtn.style.display = 'block';
+            mario.style.animation = 'none';
+            mario.style.bottom = `${marioPosition}px`;
 
-        clearInterval(loop);
-        clearInterval(scoreLoop);
-    }
-}, 10);
+            mario.src = 'imgs/game-over.png';
+
+            restartBtn.style.display = 'block';
+
+            clearInterval(loop);
+            clearInterval(scoreLoop);
+        }
+
+        // Detectar cuando Mario salta exitosamente sobre el pipe
+        if (pipePosition < -pipeWidth && pipesPassed === 0) {
+            pipesPassed = 1;
+            // El score ya se está sumando en el scoreLoop
+        }
+
+        // Resetear cuando el pipe vuelve a aparecer
+        if (pipePosition > 0) {
+            pipesPassed = 0;
+        }
+    }, 10);
+};
+
+startGameLoop();
 
 // RESTART
 restartBtn.addEventListener('click', () => {
