@@ -124,9 +124,27 @@ document.addEventListener('touchstart', (e) => {
     if (!gameStarted) {
         // start the game using the existing play handler
         playBtn.click();
+        // also perform an immediate jump on first touch
+        setTimeout(() => jump(), 50);
         return;
     }
 
     // if game already started, perform jump
     jump();
 }, { passive: false });
+
+// Mouse click: click/tap with mouse should start game (if needed) or jump
+document.addEventListener('click', (e) => {
+    // ignore clicks on control buttons
+    if (e.target === playBtn || e.target === restartBtn) return;
+    if (gameOver) return;
+
+    if (!gameStarted) {
+        playBtn.click();
+        // small delay to ensure game started before jump
+        setTimeout(() => jump(), 50);
+        return;
+    }
+
+    jump();
+});
