@@ -126,9 +126,14 @@ document.addEventListener('touchstart', (e) => {
         return;
     }
 
-    // For game-area touches, prevent default and handle jump/start
+    // For game-area touches, prevent default and handle actions
     e.preventDefault();
-    if (gameOver) return;
+    
+    // If game is over, any touch restarts
+    if (gameOver) {
+        location.reload();
+        return;
+    }
 
     if (!gameStarted) {
         playBtn.click();
@@ -141,11 +146,16 @@ document.addEventListener('touchstart', (e) => {
     jump();
 }, { passive: false });
 
-// Mouse click: click/tap with mouse should start game (if needed) or jump
+// Mouse click: click/tap with mouse should start game (if needed), jump, or restart (if game over)
 document.addEventListener('click', (e) => {
     // Let buttons handle their own clicks
     if (playBtn.contains(e.target) || restartBtn.contains(e.target)) return;
-    if (gameOver) return;
+    
+    // If game is over, any click restarts
+    if (gameOver) {
+        location.reload();
+        return;
+    }
 
     if (!gameStarted) {
         playBtn.click();
