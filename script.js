@@ -86,6 +86,11 @@ const startGameLoop = () => {
 
             clearInterval(loop);
             clearInterval(scoreLoop);
+            
+            // Asegurar que el video siga reproduciéndose
+            video.play().catch(() => {
+                // Ignorar errores si el video no puede reproducirse
+            });
         }
 
         // Detectar cuando Mario salta exitosamente sobre el pipe
